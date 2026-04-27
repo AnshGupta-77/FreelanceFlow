@@ -14,16 +14,16 @@ import { formatCurrency } from "../lib/utils";
 import { useState, useEffect } from "react";
 import type { DashboardStats, MonthlyEarning, Project, Reminder } from "../types";
 
-function StatCard({ 
-  title, 
-  value, 
-  icon: Icon, 
+function StatCard({
+  title,
+  value,
+  icon: Icon,
   trend,
-  color 
-}: { 
-  title: string; 
-  value: string | number; 
-  icon: React.ElementType; 
+  color
+}: {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
   trend?: string;
   color: string;
 }) {
@@ -32,16 +32,16 @@ function StatCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-gray-500">{title}</p>
-            <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+            <p className="text-sm font-medium text-textSecondary">{title}</p>
+            <p className="text-2xl font-bold text-textPrimary mt-1">{value}</p>
             {trend && (
-              <p className="text-sm text-green-600 mt-1 flex items-center gap-1">
+              <p className="text-sm text-accentGreen mt-1 flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" />
                 {trend}
               </p>
             )}
           </div>
-          <div className={`p-3 rounded-lg ${color}`}>
+          <div className={`p-3 rounded-xl ${color}`}>
             <Icon className="h-6 w-6" />
           </div>
         </div>
@@ -122,15 +122,10 @@ export function Dashboard() {
 
   return (
     <div className="space-y-6">
-      {/* Tailwind Test Element - Remove after verification */}
-      <div className="bg-blue-500 text-white p-4 rounded-lg shadow-lg text-center font-bold">
-        ✅ Tailwind CSS is working! This should be a blue box with white text.
-      </div>
-
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-500">Welcome back! Here's what's happening with your business.</p>
+        <h1 className="text-2xl font-bold text-textPrimary">Dashboard</h1>
+        <p className="text-textSecondary">Welcome back! Here's what's happening with your business.</p>
       </div>
 
       {/* Stats Grid */}
@@ -140,26 +135,26 @@ export function Dashboard() {
           value={formatCurrency(stats?.totalRevenue || 0)}
           icon={DollarSign}
           trend="+12% this month"
-          color="bg-green-100 text-green-600"
+          color="bg-primary/20 text-primary"
         />
         <StatCard
           title="Active Projects"
           value={stats?.activeProjects || 0}
           icon={Briefcase}
-          color="bg-blue-100 text-blue-600"
+          color="bg-sidebar text-textSecondary"
         />
         <StatCard
           title="Total Clients"
           value={stats?.totalClients || 0}
           icon={Users}
           trend="+2 new this month"
-          color="bg-purple-100 text-purple-600"
+          color="bg-accentGreen/20 text-accentGreen"
         />
         <StatCard
           title="Pending Payments"
           value={formatCurrency(stats?.pendingPayments || 0)}
           icon={AlertCircle}
-          color="bg-yellow-100 text-yellow-600"
+          color="bg-error/20 text-error"
         />
       </div>
 
@@ -173,16 +168,16 @@ export function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               {recentProjects.map((project) => (
-                <div key={project.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div key={project.id} className="flex items-center justify-between p-3 bg-sidebar rounded-xl border border-border hover:border-primary/30 transition-all duration-300">
                   <div>
-                    <p className="font-medium text-gray-900">{project.name}</p>
-                    <p className="text-sm text-gray-500">{project.client?.name}</p>
+                    <p className="font-medium text-textPrimary">{project.name}</p>
+                    <p className="text-sm text-textSecondary">{project.client?.name}</p>
                   </div>
                   <div className="text-right">
                     <Badge variant={project.status === "completed" ? "success" : "primary"}>
                       {project.status}
                     </Badge>
-                    <p className="text-sm text-gray-500 mt-1">
+                    <p className="text-sm text-textMuted mt-1">
                       {formatCurrency(project.amount_paid)} / {formatCurrency(project.budget)}
                     </p>
                   </div>
@@ -200,15 +195,15 @@ export function Dashboard() {
           <CardContent>
             <div className="space-y-4">
               {upcomingReminders.map((reminder) => (
-                <div key={reminder.id} className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                  <Clock className="h-5 w-5 text-indigo-600 mt-0.5" />
+                <div key={reminder.id} className="flex items-start gap-3 p-3 bg-sidebar rounded-xl border border-border hover:border-primary/30 transition-all duration-300">
+                  <Clock className="h-5 w-5 text-primary mt-0.5" />
                   <div className="flex-1">
-                    <p className="font-medium text-gray-900">{reminder.title}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-textPrimary">{reminder.title}</p>
+                    <p className="text-sm text-textSecondary">
                       Due: {new Date(reminder.due_date).toLocaleDateString()}
                     </p>
                   </div>
-                  <CheckCircle2 className="h-5 w-5 text-gray-400 cursor-pointer hover:text-green-500" />
+                  <CheckCircle2 className="h-5 w-5 text-textMuted cursor-pointer hover:text-accentGreen transition-colors" />
                 </div>
               ))}
             </div>

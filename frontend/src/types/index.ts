@@ -3,7 +3,10 @@ export interface User {
   email: string;
   full_name: string;
   avatar_url?: string;
+  default_currency: string;
+  timezone: string;
   created_at: string;
+  updated_at: string;
 }
 
 export interface Client {
@@ -29,6 +32,8 @@ export interface Project {
   description?: string;
   budget: number;
   amount_paid: number;
+  currency_code: string;
+  exchange_rate_to_usd: number;
   status: ProjectStatus;
   deadline: string;
   created_at: string;
@@ -40,11 +45,14 @@ export interface Payment {
   project_id: string;
   project?: Project;
   amount: number;
+  currency_code: string;
+  exchange_rate_used: number;
   payment_date: string;
   payment_method?: string;
   notes?: string;
   is_received: boolean;
   created_at: string;
+  updated_at: string;
 }
 
 export type ReminderType = "deadline" | "payment" | "follow_up" | "custom";

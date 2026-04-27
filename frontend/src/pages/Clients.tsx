@@ -59,8 +59,8 @@ export function Clients() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Clients</h1>
-          <p className="text-gray-500">Manage your client relationships</p>
+          <h1 className="text-2xl font-bold text-textPrimary">Clients</h1>
+          <p className="text-textSecondary">Manage your client relationships</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -72,7 +72,7 @@ export function Clients() {
       <Card>
         <CardContent className="p-4">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-textMuted" />
             <Input
               placeholder="Search clients by name, email, or company..."
               value={searchQuery}
@@ -103,16 +103,16 @@ export function Clients() {
               {filteredClients.map((client) => (
                 <TableRow key={client.id}>
                   <TableCell>
-                    <div className="font-medium text-gray-900">{client.name}</div>
+                    <div className="font-medium text-textPrimary">{client.name}</div>
                   </TableCell>
                   <TableCell>
                     <div className="space-y-1">
-                      <div className="flex items-center gap-2 text-sm text-gray-500">
+                      <div className="flex items-center gap-2 text-sm text-textSecondary">
                         <Mail className="h-3 w-3" />
                         {client.email}
                       </div>
                       {client.phone && (
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                        <div className="flex items-center gap-2 text-sm text-textSecondary">
                           <Phone className="h-3 w-3" />
                           {client.phone}
                         </div>
@@ -121,12 +121,12 @@ export function Clients() {
                   </TableCell>
                   <TableCell>
                     {client.company ? (
-                      <div className="flex items-center gap-2">
-                        <Building2 className="h-4 w-4 text-gray-400" />
+                      <div className="flex items-center gap-2 text-textSecondary">
+                        <Building2 className="h-4 w-4 text-textMuted" />
                         {client.company}
                       </div>
                     ) : (
-                      <span className="text-gray-400">-</span>
+                      <span className="text-textMuted">-</span>
                     )}
                   </TableCell>
                   <TableCell>

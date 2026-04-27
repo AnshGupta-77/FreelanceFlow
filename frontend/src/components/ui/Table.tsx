@@ -8,7 +8,7 @@ interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
 export function Table({ children, className, ...props }: TableProps) {
   return (
     <div className="overflow-x-auto">
-      <table className={cn("min-w-full divide-y divide-gray-200", className)} {...props}>
+      <table className={cn("min-w-full divide-y divide-border", className)} {...props}>
         {children}
       </table>
     </div>
@@ -17,7 +17,7 @@ export function Table({ children, className, ...props }: TableProps) {
 
 export function TableHead({ children, className }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
-    <thead className={cn("bg-gray-50", className)}>
+    <thead className={cn("bg-sidebar", className)}>
       {children}
     </thead>
   );
@@ -25,7 +25,7 @@ export function TableHead({ children, className }: React.HTMLAttributes<HTMLTabl
 
 export function TableBody({ children, className }: React.HTMLAttributes<HTMLTableSectionElement>) {
   return (
-    <tbody className={cn("divide-y divide-gray-200 bg-white", className)}>
+    <tbody className={cn("divide-y divide-border bg-card", className)}>
       {children}
     </tbody>
   );
@@ -33,7 +33,7 @@ export function TableBody({ children, className }: React.HTMLAttributes<HTMLTabl
 
 export function TableRow({ children, className }: React.HTMLAttributes<HTMLTableRowElement>) {
   return (
-    <tr className={cn("hover:bg-gray-50 transition-colors", className)}>
+    <tr className={cn("hover:bg-sidebar transition-all duration-200", className)}>
       {children}
     </tr>
   );
@@ -43,7 +43,7 @@ export function TableHeader({ children, className }: React.HTMLAttributes<HTMLTa
   return (
     <th
       className={cn(
-        "px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider",
+        "px-6 py-3 text-left text-xs font-medium text-textSecondary uppercase tracking-wider",
         className
       )}
     >
@@ -54,7 +54,7 @@ export function TableHeader({ children, className }: React.HTMLAttributes<HTMLTa
 
 export function TableCell({ children, className }: React.HTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className={cn("px-6 py-4 whitespace-nowrap text-sm text-gray-900", className)}>
+    <td className={cn("px-6 py-4 whitespace-nowrap text-sm text-textPrimary", className)}>
       {children}
     </td>
   );

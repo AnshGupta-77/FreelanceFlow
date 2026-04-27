@@ -14,6 +14,8 @@ class User(Base):
     google_id = Column(String, unique=True, index=True, nullable=True)
     full_name = Column(String, nullable=False)
     avatar_url = Column(String, nullable=True)
+    default_currency = Column(String, default="USD", nullable=False)
+    timezone = Column(String, default="UTC", nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
     updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
     

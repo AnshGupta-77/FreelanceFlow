@@ -10,6 +10,7 @@ interface SignupData {
   email: string;
   password: string;
   full_name: string;
+  default_currency?: string;
 }
 
 export const authService = {

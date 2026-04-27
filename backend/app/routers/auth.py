@@ -7,7 +7,7 @@ from datetime import timedelta
 from app.core.database import get_db
 from app.core.security import (
     verify_password,
-    get_password_hash,
+    hash_password,
     create_access_token,
     create_refresh_token,
     decode_token,
@@ -49,6 +49,19 @@ async def get_current_user(
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
+    # Validate password length
+    if not user_data.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is required"
+        )
+    
+    if len(user_data.password) < 6:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password must be at least 6 characters long"
+        )
+    
     # Check if user exists
     result = await db.execute(select(User).where(User.email == user_data.email))
     if result.scalar_one_or_none():
@@ -57,11 +70,13 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
             detail="Email already registered"
         )
     
-    # Create new user
+    # Create new user with SHA-256 pre-hashed password
     user = User(
         email=user_data.email,
-        hashed_password=get_password_hash(user_data.password),
+        hashed_password=hash_password(user_data.password),
         full_name=user_data.full_name,
+        default_currency=user_data.default_currency or "USD",
+        timezone=user_data.timezone or "UTC",
     )
     db.add(user)
     await db.commit()
@@ -72,9 +87,17 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
 
 @router.post("/login", response_model=Token)
 async def login(login_data: UserLogin, db: AsyncSession = Depends(get_db)):
+    # Validate password is provided (defense in depth)
+    if not login_data.password:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password is required"
+        )
+    
     result = await db.execute(select(User).where(User.email == login_data.email))
     user = result.scalar_one_or_none()
     
+    # Use SHA-256 pre-hashing compatible verify_password
     if not user or not verify_password(login_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

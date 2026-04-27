@@ -9,6 +9,8 @@ class ProjectBase(BaseModel):
     name: str
     description: str | None = None
     budget: Decimal
+    currency_code: str = "USD"
+    exchange_rate_to_usd: Decimal = Decimal("1.0")
     status: ProjectStatus = ProjectStatus.ACTIVE
     deadline: datetime | None = None
 
@@ -21,6 +23,8 @@ class ProjectUpdate(BaseModel):
     name: str | None = None
     description: str | None = None
     budget: Decimal | None = None
+    currency_code: str | None = None
+    exchange_rate_to_usd: Decimal | None = None
     status: ProjectStatus | None = None
     deadline: datetime | None = None
     client_id: str | None = None

@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import { Select } from "../components/ui/Select";
+import { CurrencySelect } from "../components/ui/CurrencySelect";
 import { Table, TableHead, TableBody, TableRow, TableHeader, TableCell } from "../components/ui/Table";
 import { Modal } from "../components/ui/Modal";
 import { Badge } from "../components/ui/Badge";
@@ -53,6 +54,7 @@ export function Projects() {
     name: "",
     client_id: "",
     budget: "",
+    currency_code: "USD",
     deadline: "",
     description: "",
     status: "active" as ProjectStatus,
@@ -114,7 +116,7 @@ export function Projects() {
       updated_at: new Date().toISOString(),
     };
     setProjects([...projects, newProject]);
-    setFormData({ name: "", client_id: "", budget: "", deadline: "", description: "", status: "active" });
+    setFormData({ name: "", client_id: "", budget: "", currency_code: "USD", deadline: "", description: "", status: "active" });
     setIsModalOpen(false);
   };
 
@@ -131,8 +133,8 @@ export function Projects() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects</h1>
-          <p className="text-gray-500">Track and manage your projects</p>
+          <h1 className="text-2xl font-bold text-textPrimary">Projects</h1>
+          <p className="text-textSecondary">Track and manage your projects</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -145,7 +147,7 @@ export function Projects() {
         <CardContent className="p-4">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-textMuted" />
               <Input
                 placeholder="Search projects..."
                 value={searchQuery}
@@ -185,24 +187,24 @@ export function Projects() {
               {filteredProjects.map((project) => (
                 <TableRow key={project.id}>
                   <TableCell>
-                    <div className="font-medium text-gray-900">{project.name}</div>
+                    <div className="font-medium text-textPrimary">{project.name}</div>
                   </TableCell>
                   <TableCell>
-                    {project.client?.name}
+                    <span className="text-textSecondary">{project.client?.name}</span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1">
-                      <DollarSign className="h-3 w-3 text-gray-400" />
-                      {formatCurrency(project.budget)}
+                    <div className="flex items-center gap-1 text-textSecondary">
+                      <DollarSign className="h-3 w-3 text-textMuted" />
+                      {formatCurrency(project.budget, project.currency_code || 'USD')}
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className={project.amount_paid >= project.budget ? "text-green-600" : "text-yellow-600"}>
-                      {formatCurrency(project.amount_paid)}
+                    <span className={project.amount_paid >= project.budget ? "text-accentGreen" : "text-primary"}>
+                      {formatCurrency(project.amount_paid, project.currency_code || 'USD')}
                     </span>
                   </TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
+                    <div className="flex items-center gap-1 text-sm text-textSecondary">
                       <Calendar className="h-3 w-3" />
                       {formatDate(project.deadline)}
                     </div>
@@ -246,20 +248,25 @@ export function Projects() {
           />
           <div className="grid grid-cols-2 gap-4">
             <Input
-              label="Budget ($)"
+              label={`Budget (${formData.currency_code})`}
               type="number"
               value={formData.budget}
               onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
               required
             />
-            <Input
-              label="Deadline"
-              type="date"
-              value={formData.deadline}
-              onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
-              required
+            <CurrencySelect
+              label="Currency"
+              value={formData.currency_code}
+              onChange={(e) => setFormData({ ...formData, currency_code: e.target.value })}
             />
           </div>
+          <Input
+            label="Deadline"
+            type="date"
+            value={formData.deadline}
+            onChange={(e) => setFormData({ ...formData, deadline: e.target.value })}
+            required
+          />
           <Select
             label="Status"
             value={formData.status}

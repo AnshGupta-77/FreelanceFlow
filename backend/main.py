@@ -19,6 +19,9 @@ async def lifespan(app: FastAPI):
     # Startup
     if settings.ENVIRONMENT == "development":
         await init_db()
+        # Seed database with demo data
+        from app.seed import seed_database
+        await seed_database()
     yield
     # Shutdown
 

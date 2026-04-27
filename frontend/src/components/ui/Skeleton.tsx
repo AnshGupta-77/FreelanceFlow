@@ -6,17 +6,17 @@ interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
   circle?: boolean;
 }
 
-export function Skeleton({ 
-  className, 
-  height = "h-4", 
+export function Skeleton({
+  className,
+  height = "h-4",
   width = "w-full",
   circle = false,
-  ...props 
+  ...props
 }: SkeletonProps) {
   return (
     <div
       className={cn(
-        "animate-pulse bg-gray-200",
+        "animate-pulse bg-sidebar",
         height,
         width,
         circle && "rounded-full",
@@ -30,7 +30,7 @@ export function Skeleton({
 
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+    <div className="bg-card rounded-xl border border-border p-6 space-y-4">
       <Skeleton height="h-6" width="w-1/3" />
       <Skeleton height="h-4" width="w-2/3" />
       <Skeleton height="h-20" />

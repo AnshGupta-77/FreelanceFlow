@@ -20,10 +20,10 @@ function NavItem({ to, icon, label, isActive }: NavItemProps) {
     <Link
       to={to}
       className={cn(
-        "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
+        "flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300",
         isActive
-          ? "bg-indigo-50 text-indigo-600"
-          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+          ? "bg-primary/20 text-primary shadow-glow-sm"
+          : "text-textSecondary hover:bg-card hover:text-textPrimary"
       )}
     >
       {icon}
@@ -47,7 +47,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-gray-900/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-bg/80 backdrop-blur-sm z-40 lg:hidden"
           onClick={onToggle}
         />
       )}
@@ -55,25 +55,25 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
       {/* Mobile toggle button */}
       <button
         onClick={onToggle}
-        className="fixed top-4 left-4 z-50 p-2 rounded-lg bg-white shadow-md lg:hidden"
+        className="fixed top-4 left-4 z-50 p-2 rounded-xl bg-card border border-border shadow-md lg:hidden"
       >
-        {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        {isOpen ? <X className="h-5 w-5 text-textPrimary" /> : <Menu className="h-5 w-5 text-textPrimary" />}
       </button>
 
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed top-0 left-0 z-40 h-screen w-64 bg-white border-r border-gray-200 transition-transform duration-200 lg:translate-x-0",
+          "fixed top-0 left-0 z-40 h-screen w-64 bg-sidebar border-r border-border transition-transform duration-300 lg:translate-x-0",
           isOpen ? "translate-x-0" : "-translate-x-full"
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
-          <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
-            <div className="h-8 w-8 rounded-lg bg-indigo-600 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">F</span>
+          <div className="flex items-center gap-3 px-6 py-5 border-b border-border">
+            <div className="h-10 w-10 rounded-xl bg-primary flex items-center justify-center shadow-glow-sm">
+              <span className="text-white font-bold text-xl">F</span>
             </div>
-            <span className="text-xl font-bold text-gray-900">FreeLanceFlow</span>
+            <span className="text-xl font-bold text-textPrimary">FreeLanceFlow</span>
           </div>
 
           {/* Navigation */}
@@ -90,8 +90,8 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
           </nav>
 
           {/* Footer */}
-          <div className="px-6 py-4 border-t border-gray-200">
-            <p className="text-xs text-gray-500">
+          <div className="px-6 py-4 border-t border-border">
+            <p className="text-xs text-textMuted">
               © 2024 FreeLanceFlow
             </p>
           </div>

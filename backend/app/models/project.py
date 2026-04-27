@@ -23,6 +23,8 @@ class Project(Base):
     description = Column(Text, nullable=True)
     budget = Column(Numeric(10, 2), nullable=False, default=0)
     amount_paid = Column(Numeric(10, 2), nullable=False, default=0)
+    currency_code = Column(String, default="USD", nullable=False)
+    exchange_rate_to_usd = Column(Numeric(10, 6), default=1.0, nullable=False)
     status = Column(Enum(ProjectStatus), default=ProjectStatus.ACTIVE, nullable=False)
     deadline = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))

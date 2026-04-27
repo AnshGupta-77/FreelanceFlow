@@ -11,6 +11,8 @@ class Payment(Base):
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     project_id = Column(String, ForeignKey("projects.id", ondelete="CASCADE"), nullable=False, index=True)
     amount = Column(Numeric(10, 2), nullable=False)
+    currency_code = Column(String, default="USD", nullable=False)
+    exchange_rate_used = Column(Numeric(10, 6), default=1.0, nullable=False)
     payment_date = Column(DateTime(timezone=True), nullable=True)
     payment_method = Column(String, nullable=True)
     notes = Column(Text, nullable=True)

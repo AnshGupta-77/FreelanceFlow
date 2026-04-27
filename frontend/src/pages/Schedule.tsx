@@ -66,10 +66,10 @@ export function Schedule() {
 
   const getTypeIcon = (type: ReminderType) => {
     switch (type) {
-      case "deadline": return <Calendar className="h-5 w-5 text-blue-600" />;
-      case "payment": return <AlertCircle className="h-5 w-5 text-yellow-600" />;
-      case "follow_up": return <Clock className="h-5 w-5 text-purple-600" />;
-      default: return <Clock className="h-5 w-5 text-gray-600" />;
+      case "deadline": return <Calendar className="h-5 w-5 text-primary" />;
+      case "payment": return <AlertCircle className="h-5 w-5 text-error" />;
+      case "follow_up": return <Clock className="h-5 w-5 text-accentGreen" />;
+      default: return <Clock className="h-5 w-5 text-textSecondary" />;
     }
   };
 
@@ -121,8 +121,8 @@ export function Schedule() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Schedule & Reminders</h1>
-          <p className="text-gray-500">Stay on top of deadlines and tasks</p>
+          <h1 className="text-2xl font-bold text-textPrimary">Schedule & Reminders</h1>
+          <p className="text-textSecondary">Stay on top of deadlines and tasks</p>
         </div>
         <Button onClick={() => setIsModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
@@ -136,10 +136,10 @@ export function Schedule() {
           <button
             key={f}
             onClick={() => setFilter(f)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300 ${
               filter === f
-                ? "bg-indigo-600 text-white"
-                : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-200"
+                ? "bg-primary text-white shadow-glow-sm"
+                : "bg-sidebar text-textSecondary hover:bg-card hover:text-textPrimary border border-border"
             }`}
           >
             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -150,13 +150,13 @@ export function Schedule() {
       {/* Reminders List */}
       <div className="space-y-4">
         {filteredReminders.map((reminder) => (
-          <Card key={reminder.id} hover={false} className={reminder.is_completed ? "opacity-75" : ""}>
+          <Card key={reminder.id} hover={false} className={reminder.is_completed ? "opacity-60" : ""}>
             <CardContent className="p-4">
               <div className="flex items-start gap-4">
-                <div className={`p-2 rounded-lg ${
-                  reminder.reminder_type === "deadline" ? "bg-blue-100" :
-                  reminder.reminder_type === "payment" ? "bg-yellow-100" :
-                  reminder.reminder_type === "follow_up" ? "bg-purple-100" : "bg-gray-100"
+                <div className={`p-2 rounded-xl ${
+                  reminder.reminder_type === "deadline" ? "bg-primary/20" :
+                  reminder.reminder_type === "payment" ? "bg-error/20" :
+                  reminder.reminder_type === "follow_up" ? "bg-accentGreen/20" : "bg-sidebar"
                 }`}>
                   {getTypeIcon(reminder.reminder_type)}
                 </div>
@@ -164,21 +164,21 @@ export function Schedule() {
                   <div className="flex items-start justify-between">
                     <div>
                       <div className="flex items-center gap-2">
-                        <h3 className={`font-medium ${reminder.is_completed ? "line-through text-gray-500" : "text-gray-900"}`}>
+                        <h3 className={`font-medium ${reminder.is_completed ? "line-through text-textMuted" : "text-textPrimary"}`}>
                           {reminder.title}
                         </h3>
                         {getTypeBadge(reminder.reminder_type)}
                       </div>
                       {reminder.description && (
-                        <p className="text-sm text-gray-500 mt-1">{reminder.description}</p>
+                        <p className="text-sm text-textSecondary mt-1">{reminder.description}</p>
                       )}
                     </div>
                     <button
                       onClick={() => toggleComplete(reminder.id)}
-                      className={`p-2 rounded-full transition-colors ${
-                        reminder.is_completed 
-                          ? "text-green-600 bg-green-100" 
-                          : "text-gray-400 hover:text-green-600 hover:bg-green-100"
+                      className={`p-2 rounded-full transition-all duration-300 ${
+                        reminder.is_completed
+                          ? "text-accentGreen bg-accentGreen/20"
+                          : "text-textMuted hover:text-accentGreen hover:bg-accentGreen/20"
                       }`}
                     >
                       <CheckCircle2 className="h-5 w-5" />
@@ -187,12 +187,12 @@ export function Schedule() {
                   <div className="flex items-center gap-4 mt-3 text-sm">
                     <span className={`flex items-center gap-1 ${
                       new Date(reminder.due_date) < new Date() && !reminder.is_completed
-                        ? "text-red-600"
-                        : "text-gray-500"
+                        ? "text-error"
+                        : "text-textSecondary"
                     }`}>
                       <Calendar className="h-3 w-3" />
                       {formatDate(reminder.due_date)}
-                      <span className="text-xs">({formatDateRelative(reminder.due_date)})</span>
+                      <span className="text-xs text-textMuted">({formatDateRelative(reminder.due_date)})</span>
                     </span>
                   </div>
                 </div>
@@ -203,8 +203,8 @@ export function Schedule() {
         {filteredReminders.length === 0 && (
           <Card>
             <CardContent className="p-8 text-center">
-              <Clock className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500">No reminders found</p>
+              <Clock className="h-12 w-12 text-textMuted mx-auto mb-4" />
+              <p className="text-textSecondary">No reminders found</p>
             </CardContent>
           </Card>
         )}
