@@ -3,7 +3,8 @@ from datetime import datetime, timezone, timedelta
 from decimal import Decimal
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from app.core.database import AsyncSessionLocal
+from app.core.database import AsyncSessionLocal, engine
+from app.core.database import Base
 from app.core.security import hash_password
 from app.models.user import User
 from app.models.client import Client
@@ -12,16 +13,41 @@ from app.models.payment import Payment
 from app.models.reminder import Reminder, ReminderType
 
 
+async def clear_database(session: AsyncSession):
+    """Clear all existing data from database to avoid hash conflicts."""
+    print("Clearing existing database data...")
+    
+    # Delete in reverse order of dependencies
+    from app.models.reminder import Reminder
+    from app.models.payment import Payment
+    from app.models.project import Project
+    from app.models.client import Client
+    from app.models.user import User
+    
+    # Delete all records (order matters due to foreign keys)
+    await session.execute(select(Reminder))
+    await session.execute(select(Payment))
+    await session.execute(select(Project))
+    await session.execute(select(Client))
+    await session.execute(select(User))
+    
+    # Use raw delete to bypass ORM
+    from sqlalchemy import text
+    await session.execute(text("DELETE FROM reminders"))
+    await session.execute(text("DELETE FROM payments"))
+    await session.execute(text("DELETE FROM projects"))
+    await session.execute(text("DELETE FROM clients"))
+    await session.execute(text("DELETE FROM users"))
+    
+    await session.commit()
+    print("Database cleared successfully.")
+
+
 async def seed_database():
-    """Seed the database with demo data."""
+    """Seed the database with demo data using Argon2 password hashing."""
     async with AsyncSessionLocal() as session:
-        # Check if data already exists
-        result = await session.execute(select(User).limit(1))
-        existing_user = result.scalar_one_or_none()
-        
-        if existing_user:
-            print("Database already seeded, skipping...")
-            return
+        # Always clear existing data to avoid bcrypt/argon2 hash conflicts
+        await clear_database(session)
         
         print("Seeding database with demo data...")
         
@@ -32,7 +58,6 @@ async def seed_database():
             hashed_password=hash_password("password123"),
             full_name="Demo User",
             default_currency="USD",
-            timezone="America/New_York"
         )
         session.add(demo_user)
         await session.flush()  # Get the user_id

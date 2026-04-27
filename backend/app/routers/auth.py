@@ -15,7 +15,7 @@ from app.core.security import (
 from app.models import User
 from app.schemas import UserCreate, UserLogin, UserResponse, Token
 
-router = APIRouter(prefix="/auth", tags=["Authentication"])
+router = APIRouter(tags=["Authentication"])
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/auth/login")
 
@@ -70,13 +70,12 @@ async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
             detail="Email already registered"
         )
     
-    # Create new user with SHA-256 pre-hashed password
+    # Create new user with Argon2 hashed password
     user = User(
         email=user_data.email,
         hashed_password=hash_password(user_data.password),
         full_name=user_data.full_name,
         default_currency=user_data.default_currency or "USD",
-        timezone=user_data.timezone or "UTC",
     )
     db.add(user)
     await db.commit()
@@ -97,7 +96,7 @@ async def login(login_data: UserLogin, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).where(User.email == login_data.email))
     user = result.scalar_one_or_none()
     
-    # Use SHA-256 pre-hashing compatible verify_password
+    # Use Argon2 compatible verify_password
     if not user or not verify_password(login_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

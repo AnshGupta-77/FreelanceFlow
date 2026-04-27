@@ -3,77 +3,76 @@ Security module for password hashing and JWT token management.
 
 Password Hashing Strategy:
 -------------------------
-We use SHA-256 pre-hashing before bcrypt to overcome bcrypt's 72-byte limitation.
+We use Argon2 for password hashing - a modern, memory-hard password hashing
+algorithm that won the Password Hashing Competition (PHC) in 2015.
 
-Why SHA-256 Pre-hashing?
-- bcrypt has a hard 72-byte input limit; longer passwords are silently truncated
-- SHA-256 converts any password length to a fixed 64-character hex string
-- This allows secure handling of long passwords and special characters
-- The bcrypt hash of the SHA-256 digest provides the same security level
+Why Argon2?
+- No password length limitations (unlike bcrypt's 72-byte limit)
+- Memory-hard design resistant to GPU/ASIC attacks
+- Configurable time, memory, and parallelism costs
+- Recommended by OWASP and NIST
+- Winner of the Password Hashing Competition (PHC)
 
-Flow:
-1. User password → SHA-256 → 64-char hex digest (always < 72 bytes)
-2. SHA-256 digest → bcrypt → stored hash
-3. Verification: password → SHA-256 → bcrypt verify against stored hash
+Configuration:
+- Type: Argon2id (hybrid mode - resistant to both side-channel and GPU attacks)
+- Memory: 64 MB (default)
+- Iterations: 3 (default)
+- Parallelism: 1 (default)
 """
 from datetime import datetime, timedelta, timezone
 from typing import Any
-import hashlib
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def _prehash_password(password: str) -> str:
-    """
-    Pre-hash password using SHA-256 to ensure it fits within bcrypt's 72-byte limit.
-    
-    Args:
-        password: Plain text password of any length
-        
-    Returns:
-        64-character hex string (SHA-256 digest)
-    """
-    # Encode password to bytes and create SHA-256 digest
-    password_bytes = password.encode('utf-8')
-    sha256_hash = hashlib.sha256(password_bytes).hexdigest()
-    return sha256_hash
+# Use Argon2id - the recommended variant that combines Argon2i and Argon2d
+# Argon2id is resistant to both side-channel attacks and GPU cracking
+pwd_context = CryptContext(
+    schemes=["argon2"],
+    deprecated="auto",
+    argon2__type="ID",  # Argon2id variant
+    argon2__memory_cost=65536,  # 64 MB
+    argon2__time_cost=3,        # 3 iterations
+    argon2__parallelism=1,    # 1 parallel thread
+)
 
 
 def hash_password(password: str) -> str:
     """
-    Hash a password using SHA-256 pre-hashing + bcrypt.
+    Hash a password using Argon2id.
     
-    This function safely handles passwords of any length by first applying
-    SHA-256 to overcome bcrypt's 72-byte limitation.
+    Argon2id is a memory-hard password hashing algorithm with no length
+    limitations. It provides strong resistance against GPU and ASIC attacks.
     
     Args:
         password: Plain text password (any length, minimum 6 chars recommended)
         
     Returns:
-        str: bcrypt hash of the SHA-256 digest
+        str: Argon2id hash string
+        
+    Example:
+        >>> hash_password("my_password")
+        '$argon2id$v=19$m=65536,t=3,p=1$...'
     """
-    prehashed = _prehash_password(password)
-    return pwd_context.hash(prehashed)
+    return pwd_context.hash(password)
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    Verify a plain password against a hashed password.
-    
-    Uses the same SHA-256 pre-hashing approach as hash_password() for consistency.
+    Verify a plain password against an Argon2id hashed password.
     
     Args:
         plain_password: Plain text password provided by user
-        hashed_password: Stored bcrypt hash from hash_password()
+        hashed_password: Stored Argon2id hash
         
     Returns:
         bool: True if password matches, False otherwise
     """
-    prehashed = _prehash_password(plain_password)
-    return pwd_context.verify(prehashed, hashed_password)
+    try:
+        return pwd_context.verify(plain_password, hashed_password)
+    except Exception:
+        # Return False for any verification errors (invalid hash format, etc.)
+        return False
 
 
 # Keep backward compatibility alias

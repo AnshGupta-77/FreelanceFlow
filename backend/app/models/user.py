@@ -6,20 +6,17 @@ from app.core.database import Base
 
 
 class User(Base):
+    """User model - simplified for production SaaS."""
     __tablename__ = "users"
-    
+
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
     email = Column(String, unique=True, index=True, nullable=False)
-    hashed_password = Column(String, nullable=True)
-    google_id = Column(String, unique=True, index=True, nullable=True)
+    hashed_password = Column(String, nullable=False)
     full_name = Column(String, nullable=False)
-    avatar_url = Column(String, nullable=True)
     default_currency = Column(String, default="USD", nullable=False)
-    timezone = Column(String, default="UTC", nullable=False)
     created_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
-    updated_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc))
-    
-    # Relationships
+
+    # Relationships - cascade delete for data isolation
     clients = relationship("Client", back_populates="user", cascade="all, delete-orphan")
     projects = relationship("Project", back_populates="user", cascade="all, delete-orphan")
     reminders = relationship("Reminder", back_populates="user", cascade="all, delete-orphan")

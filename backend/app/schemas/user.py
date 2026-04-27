@@ -5,9 +5,7 @@ from datetime import datetime
 class UserBase(BaseModel):
     email: EmailStr
     full_name: str
-    avatar_url: str | None = None
     default_currency: str = "USD"
-    timezone: str = "UTC"
 
 
 class UserCreate(UserBase):
@@ -21,16 +19,13 @@ class UserLogin(BaseModel):
 
 class UserUpdate(BaseModel):
     full_name: str | None = None
-    avatar_url: str | None = None
     default_currency: str | None = None
-    timezone: str | None = None
 
 
 class UserResponse(UserBase):
     id: str
     created_at: datetime
-    updated_at: datetime
-    
+
     class Config:
         from_attributes = True
 
